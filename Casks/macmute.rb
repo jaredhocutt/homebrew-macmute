@@ -1,9 +1,8 @@
 cask "macmute" do
-  version "1.2.8,1"
-  sha256 "bb382decef7d9cca7678a9c8776a283d7c99a45ff64b4689dc3aeccf29ed19f4"
+  version "1.2.7,1"
+  sha256 "602db87be264dd51f0d116290b7be003bd8f93b379737b6017d31fc33c57d709"
 
-  url "https://github.com/TuanBT/MacMute/releases/download/v#{version.csv.first}/MacMute-#{version.csv.first}-#{version.csv.second}.dmg",
-      verified: "github.com/TuanBT/MacMute/"
+  url "https://github.com/TuanBT/MacMute/releases/download/v#{version.csv.first}/MacMute-#{version.csv.first}-#{version.csv.second}.dmg"
   name "MacMute"
   desc "Menu bar app that adds a global microphone mute hotkey"
   homepage "https://tuanbt.github.io/MacMute/"
@@ -22,15 +21,15 @@ cask "macmute" do
   end
 
   depends_on arch: :arm64
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
   app "MacMute.app"
 
   # MacMute is ad-hoc signed and not notarized, so Gatekeeper blocks it on
   # first launch. Upstream's install instructions remove the quarantine
   # attribute; do the same here.
-  postflight do
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{appdir}/MacMute.app"]
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/MacMute.app"]
   end
 
   uninstall quit: "com.tuanbt.macmute"
