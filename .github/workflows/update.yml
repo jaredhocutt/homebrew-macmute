@@ -65,5 +65,5 @@ jobs:
           cd "$(brew --repository "$TAP")"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "macmute $LATEST"
-          git push
+          git commit -am "MacMute $LATEST"
+          git push origin "HEAD:$GITHUB_REF_NAME"
