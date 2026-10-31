@@ -25,24 +25,19 @@ cask "macmute" do
 
   app "MacMute.app"
 
-  # MacMute is ad-hoc signed and not notarized, so Gatekeeper blocks it on
-  # first launch. Upstream's install instructions remove the quarantine
-  # attribute; do the same here.
-  postflight_steps do
-    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/MacMute.app"]
-  end
-
   uninstall quit: "com.tuanbt.macmute"
 
   zap trash: "~/Library/Preferences/com.tuanbt.macmute.plist"
 
-  caveats <<~EOS
-    To let MacMute press the Teams mute button, grant it access in:
-      System Settings > Privacy & Security > Accessibility
+  caveats do
+    unsigned_accessibility
+    <<~EOS
+      MacMute is not notarized, so macOS blocks it the first time it opens
+      after each install or upgrade. To allow it, open it once, then click
+      Open Anyway in System Settings > Privacy & Security.
 
-    MacMute's signature changes with every build, so after each upgrade
-    remove the old MacMute entry there and grant access again. Without
-    this permission MacMute still works, but falls back to muting the
-    default input device through CoreAudio.
-  EOS
+      Without Accessibility access MacMute still works, but mutes the default
+      input device through CoreAudio instead of pressing the Teams mute button.
+    EOS
+  end
 end

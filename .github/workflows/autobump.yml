@@ -1,0 +1,44 @@
+name: brew bump
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/autobump.yml
+  schedule:
+    # Every day at 14:35 UTC
+    - cron: "35 14 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+defaults:
+  run:
+    shell: bash -xeuo pipefail {0}
+
+jobs:
+  autobump:
+    # Casks are bumped on macOS, as in Homebrew/homebrew-cask.
+    runs-on: macos-26
+    # The bump branch and PR are made with HOMEBREW_BUMP_TOKEN, not GITHUB_TOKEN.
+    permissions:
+      contents: read
+    steps:
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@d482da0e602890d3160aade42e72c8556103bf04 # 2026.10.26.1
+
+      - name: Set up git
+        id: git_setup
+        uses: Homebrew/actions/git-user-config@d482da0e602890d3160aade42e72c8556103bf04 # 2026.10.26.1
+
+      - name: Bump casks
+        env:
+          # A personal access token, so the PR it opens triggers tests.yml;
+          # GitHub doesn't run workflows for PRs opened with GITHUB_TOKEN.
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+          HOMEBREW_GIT_COMMITTER_NAME: ${{ steps.git_setup.outputs.name }}
+          HOMEBREW_GIT_COMMITTER_EMAIL: ${{ steps.git_setup.outputs.email }}
+          TAP_NAME: ${{ steps.set-up-homebrew.outputs.tap-name }}
+        run: brew bump --no-fork --open-pr --casks --tap="$TAP_NAME"
