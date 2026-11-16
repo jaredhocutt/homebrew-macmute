@@ -1,6 +1,6 @@
 cask "macmute" do
-  version "1.2.8,1"
-  sha256 "bb382decef7d9cca7678a9c8776a283d7c99a45ff64b4689dc3aeccf29ed19f4"
+  version "1.2.9,1"
+  sha256 "68b25bb38319e49a8ebda3967217536f4f42503c8f2bf0b0efd235e2e8ddde5b"
 
   url "https://github.com/TuanBT/MacMute/releases/download/v#{version.csv.first}/MacMute-#{version.csv.first}-#{version.csv.second}.dmg"
   name "MacMute"
